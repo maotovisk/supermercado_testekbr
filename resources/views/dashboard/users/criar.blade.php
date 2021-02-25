@@ -66,7 +66,7 @@
                             <!-- Administrador -->
                             <div class="block mt-4">
                                 <label for="is_admin" class="inline-flex items-center">
-                                    <input value="off" id="is_admin" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" name="admin">
+                                    <input  {{old('admin') == 'on' ? "checked" :"" }} value="off" id="is_admin" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" name="admin">
                                     <span class="ml-2 text-sm text-gray-600">{{ __('Administrador') }}</span>
                                 </label>
                             </div>
