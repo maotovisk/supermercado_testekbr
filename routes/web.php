@@ -22,5 +22,10 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['au
 
 require __DIR__.'/auth.php';
 
+
+// Rotas para Users
 require __DIR__.'/users.php';
 
+
+//Rotas para Categorias
+require __DIR__.'/categorias.php';
