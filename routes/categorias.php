@@ -36,5 +36,11 @@ Route::group(['prefix' => 'categoria', 'as' => 'categorias', 'middleware' => 'au
         */
         Route::post('/{id}/atualizar', [CategoriaController::class, 'update'])
             ->name('.atualizar');
+
+        /*
+        POST: Deletar Usuario (api)
+        */
+        Route::delete('/{id}/excluir', [CategoriaController::class, 'destroy'])
+            ->name('.excluir');
     });
 });

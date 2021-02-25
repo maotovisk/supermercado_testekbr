@@ -38,12 +38,12 @@ class CategoriaController extends Controller
     {
         //
         $request->validate([
-            'titulo' => 'required|string|max:255',
+            'titulo' => 'required|unique:categorias|string|max:255',
         ]);
 
 
         $categoria = Categoria::create([
-            'titlulo' => $request->titulo,
+            'titulo' => $request->titulo,
         ]);
 
         return redirect(route('categorias'))->with('status', 'Categoria adicionada!');
@@ -85,7 +85,7 @@ class CategoriaController extends Controller
     {
 
         $request->validate([
-            'titulo' => 'required|string|max:255',
+            'titulo' => 'required|unique:categorias:string|max:255',
         ]);
 
 
@@ -93,7 +93,7 @@ class CategoriaController extends Controller
         $categoria->titulo = $request->titulo;
         $categoria->save();
 
-        return redirect(route('categorias'))->with('status', 'Categoria adicionada!');
+        return redirect(route('categorias'))->with('status', 'Categoria atualizada!');
     }
 
     /**
@@ -104,6 +104,8 @@ class CategoriaController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Categoria::destroy($id);
+
+        return redirect(route('categorias'))->with('status', 'Categoria removida com sucesso!');
     }
 }

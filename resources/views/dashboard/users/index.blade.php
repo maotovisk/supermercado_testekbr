@@ -61,7 +61,7 @@
                     {{ $users->links() }}
                 </div>
             @else
-                <p>Não há categorias.</p>
+                <p>Não há usuários cadastrados.</p>
             @endif
 
         </x-container-principal>

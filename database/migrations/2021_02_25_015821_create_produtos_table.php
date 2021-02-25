@@ -17,11 +17,14 @@ class CreateProdutosTable extends Migration
             $table->id();
             $table->string('titulo')->unique();
             $table->string('descricao');
-            $table->integer('subcategoria_id');
             $table->string('imagem');
             $table->decimal('valor');
             $table->boolean('is_active');
             $table->timestamps();
+            $table->foreignId('subcategoria_id')
+            ->constrained()
+            ->onUpdate('cascade')
+            ->onDelete('cascade');
         });
     }
 
