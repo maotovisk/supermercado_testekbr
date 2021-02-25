@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Subcategoria;
 
 class Produto extends Model
 {
@@ -23,6 +24,13 @@ class Produto extends Model
         'is_active',
     ];
 
+    public function subcategoria() {
+        return $this->belongsTo(Subcategoria::class);
+    }
+
+    public function categoria() {
+        return $this->hasOneThrough(Categoria::class, Subcategoria::class, 'id', 'id', 'subcategoria_id', 'categoria_id');
+    }
 
     protected $casts = [
         'tags' => 'array'

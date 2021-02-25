@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Subcategoria;
+use App\Models\Produto;
 
 class Categoria extends Model
 {
@@ -18,6 +19,10 @@ class Categoria extends Model
     protected $fillable = [
         'titulo',
     ];
+
+    public function produtos(){
+        return $this-> hasManyThrough(Produto::class, Subcategoria::class);
+    }
 
     public function subcategorias() {
         return $this->hasMany(Subcategoria::class);

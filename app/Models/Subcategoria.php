@@ -20,6 +20,9 @@ class Subcategoria extends Model
         'categoria_id'
     ];
     
+    public function produtos() {
+        $this->hasMany(Produto::class);
+    }
     public function categoria() {
         return $this->belongsTo(Categoria::class);
     }
