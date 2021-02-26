@@ -21,7 +21,7 @@ class Categoria extends Model
     ];
 
     public function produtos(){
-        return $this-> hasManyThrough(Produto::class, Subcategoria::class);
+        return $this->hasManyThrough(Produto::class, Subcategoria::class);
     }
 
     public function subcategorias() {

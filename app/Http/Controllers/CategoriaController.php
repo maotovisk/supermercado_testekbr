@@ -85,15 +85,15 @@ class CategoriaController extends Controller
     {
 
         $request->validate([
-            'titulo' => 'required|unique:categorias:string|max:255',
+            'titulo' => 'required|unique:ategorias|string|max:255',
         ]);
 
 
-        $categoria = Categoria::find($id);
-        $categoria->titulo = $request->titulo;
-        $categoria->save();
+        $subcategoria = Categoria::find($id);
+        $subcategoria->titulo = $request->titulo;
+        $subcategoria->save();
 
-        return redirect(route('categorias'))->with('status', 'Categoria atualizada!');
+        return redirect(route('subcategoria'))->with('status', 'Categoria atualizada!');
     }
 
     /**
