@@ -21,6 +21,14 @@
                 <div>
                     <x-label for="tilulo" :value="__('Título')" />
 
+                    @if (count($categorias) > 0)
+                        <x-select :name="'categoria_id'" :id="'categoria_select'">
+                            @foreach ($categorias as $cat)
+                                <option @if($cat->id == $categoria->id) selected="selected" @endif value="{{ $cat->id }}">{{$cat->titulo}}</option>
+                            @endforeach
+                        </x-select>
+                    @endif
+
                     <x-input id="titulo" class="block mt-1 w-full" type="text" name="titulo" :value="$subcategoria->titulo"
                         required autofocus />
                 </div>

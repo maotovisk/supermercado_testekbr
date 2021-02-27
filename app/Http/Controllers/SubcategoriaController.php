@@ -6,6 +6,7 @@ use App\Models\Categoria;
 use Illuminate\Http\Request;
 use App\Models\Subcategoria;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class SubcategoriaController extends Controller
 {
@@ -74,8 +75,9 @@ class SubcategoriaController extends Controller
     public function edit($categoria_id, $id)
     {
         $subcategoria = Subcategoria::find($id);
+        $categorias = Categoria::get();
 
-        return view('dashboard.categoria.subcategoria.editar', ['subcategoria' => $subcategoria, 'categoria'=>$subcategoria->categoria]);
+        return view('dashboard.categoria.subcategoria.editar', ['subcategoria' => $subcategoria, 'categoria'=>$subcategoria->categoria, 'categorias' => $categorias]);
         //
     }
 
@@ -90,14 +92,18 @@ class SubcategoriaController extends Controller
     {
 
         $request->validate([
-            'titulo' => 'required|unique:subcategorias|string|max:255',
+            'titulo' => ['required',
+            Rule::unique('subcategorias')->where(function ($query) {
+                return $query->where('categoria_id', $_REQUEST['categoria_id']);
+            })]
         ]);
 
         $subcategoria = Subcategoria::find($id);
         $subcategoria->titulo = $request->titulo;
+        $subcategoria->categoria_id = $request->categoria_id == "" ? $subcategoria->categoria_id : $request->categoria_id;
         $subcategoria->save();
 
-        return redirect(route('categorias.subcategorias', $categoria_id))->with('status', 'Subcategoria atualizada!');
+        return redirect(route('categorias.subcategorias', $request->categoria_id == "" ? $subcategoria->categoria_id : $request->categoria_id))->with('status', 'Subcategoria atualizada!');
     }
 
     /**

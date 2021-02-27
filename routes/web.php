@@ -27,5 +27,8 @@ require __DIR__.'/auth.php';
 require __DIR__.'/users.php';
 
 
-//Rotas para Categorias
+//Rotas para Categorias/Subcategorias
 require __DIR__.'/categorias.php';
+
+//Rotas para Produtos
+require __DIR__.'/produtos.php';
