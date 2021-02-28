@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DestaqueController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProdutoController;
 
@@ -61,3 +62,19 @@ Route::group(['prefix' => 'produto', 'as' => 'produtos', 'middleware' => 'auth']
 
 });
 
+
+Route::group(['prefix' => 'destaque', 'as' => 'destaques', 'middleware' => ['auth', 'admin']], function () {
+
+        /*
+        GET: Adicionar Produto (view)
+        */
+        Route::get('/adicionar/{produto_id}', [DestaqueController::class, 'create'])
+            ->name('.adicionar');
+        
+        /*
+        GET: Adicionar Produto (view)
+        */
+        Route::get('/remover/{id}', [DestaqueController::class, 'destroy'])
+            ->name('.remover');
+
+});

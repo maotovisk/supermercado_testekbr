@@ -1,7 +1,12 @@
-@props(['editar', 'deletar'])
+@props(['editar', 'deletar', 'destacar'])
 
 <div class="flex flex-wrap justify-start md:justify-center items-center space-x-0 space-y-2 sm:space-x-2 sm:space-y-0">
     <div class="divide-x-2 border border-gray-300 shadow-sm rounded-md">
+        
+        @if (isset($destacar))
+            <button onclick="window.location.href='{{ $destacar }}'" class="px-2"><p class="text-gray-500">Destacar</p></button>
+        @endif
+        
         <button onclick="window.location.href='{{ $editar }}'" class="p-2">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                 class="h-4 w-4 text-indigo-500">

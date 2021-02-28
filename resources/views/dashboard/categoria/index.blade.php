@@ -40,7 +40,7 @@
                             <tr>
                                 <td class="py-2 px-3">{{ $categoria->titulo }}</td>
                                 <td class="py-2 px-3">{{ count($categoria->produtos) }}</td>
-                                <td class="py-2 px-3 text-center"><x-botao-link :href="route('categorias.subcategorias', $categoria->id)">Ver</x-botao-link></td>
+                                <td class="py-2 px-3 text-center"><x-botao-link :href="route('categorias.subcategorias', $categoria->id)">Subcategorias</x-botao-link></td>
                                 @if (Auth::user()->is_admin)
                                     <td class="py-2">
                                         <x-grupo-editar-deletar :deletar="route('categorias.excluir', $categoria->id)" :editar="route('categorias.editar', $categoria->id)" />

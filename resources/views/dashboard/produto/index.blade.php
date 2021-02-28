@@ -20,6 +20,28 @@
 
         <x-container-principal>
             @if (count($produtos) > 0)
+            <div class="my-3">
+            <p class="text-xl text-gray-800 font-semibold">{{ __('Destaques') }}</p>
+                @if (count($destaques) > 0)
+                <div class="flex mt-3 overflow-y">
+                    @foreach ($destaques as $destaque)
+                        <div class="bg-grey overflow-hidden shadow-sm sm:rounded-lg">
+                            <div class="p-6 bg-white border-b border-gray-200flex-col justify-center">
+                                <p> {{$destaque->produto->titulo}} </p>
+                                <p class="py-2 px-3">R$ {{ $destaque->produto->valor }}</p>
+                                <x-botao-link :href="route('produtos.ver', $destaque->produto->id)">Ver</x-botao-link>
+                                @if (Auth::user()->is_admin)
+                                    <x-botao-link :href="route('destaques.remover',$destaque->id)" >Remover</x-botao-link>
+                                @endif
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+                @else
+                    <span>Não há destaques cadastrados</span>
+                @endif
+            </div>
+                <hr>
                 <x-controle-tabelas>
                     <div style="width:100%" class="flex flex-grow justify-between items-center">
                         <div class="flex">
@@ -96,7 +118,7 @@
                                 </td>
                                 @if (Auth::user()->is_admin)
                                     <td class="py-2">
-                                        <x-grupo-editar-deletar :deletar="route('produtos.excluir', $produto->id)"
+                                        <x-grupo-editar-deletar :destacar="route('destaques.adicionar', $produto->id)" :deletar="route('produtos.excluir', $produto->id)"
                                             :editar="route('produtos.editar', $produto->id)" />
                                     </td>
                                 @endif

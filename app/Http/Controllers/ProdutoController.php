@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Categoria;
+use App\Models\Destaque;
 use App\Models\Subcategoria;
 use App\Models\Produto;
+use App\Models\User;
+use App\Notifications\ProdutoCadastradoNotification;
 use Barryvdh\DomPDF\Facade as PDF;
 use Faker\Provider\Uuid;
 use Illuminate\Http\Request;
@@ -32,6 +35,8 @@ class ProdutoController extends Controller
         $categorias = Categoria::get();
 
         $subcategorias = Subcategoria::get();
+
+        $destaques = Destaque::get();
 
         if ($selectedCategory !== null) {
             $categoria = Categoria::find($selectedCategory);
@@ -79,7 +84,7 @@ class ProdutoController extends Controller
 
         //
         return view('dashboard.produto.index', ['produtos' => $produtos
-            ->appends(request()->query()), 'categorias' => $categorias, 'subcategorias' => $subcategorias,  'scategoria' => $selectedCategory, 'ssubcategoria' => $selectedSubcategory]);
+            ->appends(request()->query()), 'categorias' => $categorias, 'subcategorias' => $subcategorias,  'scategoria' => $selectedCategory, 'ssubcategoria' => $selectedSubcategory, 'destaques' => $destaques]);
     }
 
     /**
@@ -142,8 +147,10 @@ class ProdutoController extends Controller
             if ($request->file('imagem')->isValid()) {
                 $image_name = Uuid::uuid() . "-produto." . $request->imagem->extension();
                 $image_path = $request->imagem->storeAs('imagens', $image_name);
-                $image_url = Storage::url('imagens/'.$image_name);}
-            throw ValidationException::withMessages(['Imagem' => 'Não foi possível enviar imagem']);
+                $image_url = Storage::url('imagens/'.$image_name);
+            } else {
+                throw ValidationException::withMessages(['Imagem' => 'Não foi possível enviar imagem']);
+            }
         }
 
         /* Começa a salvar Produto*/
@@ -155,6 +162,12 @@ class ProdutoController extends Controller
             'is_active' => $request->active === "on" ? 1 : 0,
             'imagem' => $image_path !== null ? $image_url : "noimage.jpg"
         ]);
+
+        $admins = User::where('is_admin', true)->get();
+
+        foreach ($admins as $admin) {
+            $admin->notify(new ProdutoCadastradoNotification($produto));
+        }
 
         return redirect(route('produtos'))->with('status', 'Produto adicionado!');
     }
@@ -257,6 +270,7 @@ class ProdutoController extends Controller
 
         $produto->save();
 
+
         /* 
             'titulo' => $request->titulo,
             'descricao' => $request->descricao,
@@ -295,6 +309,9 @@ class ProdutoController extends Controller
         $selectedCategory = $request->input('categoria');
 
         $produtos = Produto::all();
+
+        if (count($produtos) == 0)
+            return redirect(route('produtos'))->with('error', "Não há produtos cadastrados!");
 
         if ($selectedCategory !== null) {
 
