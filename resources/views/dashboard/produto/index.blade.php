@@ -16,7 +16,29 @@
         <x-container-principal>
             @if (count($produtos) > 0)
                 <x-controle-tabelas>
-                    Filtros
+                    <div class="flex flex-wrap ">
+                    <div>
+                        <label for="select_categoria">Categoria: <label>
+                        <select name="select_categoria" onchange="sendRequest('categoria', this.value)">
+                            <option value="todas">Todas</option>
+                            @foreach ($categorias as $categoria)
+                                <option @if ($scategoria == $categoria->id) selected @endif value="{{$categoria->id}}">{{$categoria->titulo}}</option>
+                            @endforeach
+                        </select> 
+                    </div>
+                    @if (is_numeric($scategoria) || is_numeric($ssubcategoria))
+                    <div class="px-4">
+                    <label for="select_subcategoria">Subcategoria: <label>
+                        <select name="select_subcategoria" onchange="sendRequest('subcategoria', this.value)">
+                            <option value="todas">Todas</option>
+                            @foreach ($subcategorias as $subcategoria)
+                                <option @if ($ssubcategoria == $subcategoria->id) selected @endif value="{{$subcategoria->id}}">{{$subcategoria->titulo}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    @endif 
+
+                </div>
                 </x-controle-tabelas>
                 <x-tabela>
                     <thead class="bg-gray-50 text-gray-500 text-sm">
@@ -63,10 +85,42 @@
                 <div class="m-6">
                     <hr>
                     <br>
-                    {{ $produtos->links() }}
+                    {{ $produtos->appends(request()->input())->links() }}
                 </div>
             @else
                 <p>Não há produtos cadastrados.</p>
             @endif
         </x-container-principal>
+
+        <script>
+            function sendRequest(tipo, id) {
+
+                var queryParams = new URLSearchParams(window.location.search);
+
+                if (id != "todas")
+                {
+                    if (tipo == "categoria"){
+                        queryParams.set("categoria", id);
+                        queryParams.set("page", 1);
+                    }
+                    if (tipo == "subcategoria") {
+                        queryParams.set("subcategoria", id);
+                        queryParams.set("page", 1);
+                    }
+                } else { 
+                    if (tipo == "categoria")
+                        queryParams.delete('categoria')
+                        queryParams.delete("subcategoria");
+
+                    if (tipo == "subcategoria")
+                        queryParams.delete("subcategoria");
+
+
+                }
+
+                
+                    history.replaceState(null, null, "?"+queryParams.toString());
+                location.reload();
+            }
+        </script>
     </x-app-layout>

@@ -17,6 +17,9 @@ Route::group(['prefix' => 'produto', 'as' => 'produtos', 'middleware' => 'auth']
     Route::get('/', [ProdutoController::class, 'index'])
         ->name('');
 
+    Route::get('/exportar', [ProdutoController::class, 'export'])
+        ->name('.exportar');
+
     Route::middleware('admin')->group(function () {
 
         /*

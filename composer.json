@@ -15,7 +15,8 @@
         "guzzlehttp/guzzle": "^7.2",
         "laravel/breeze": "^1.1",
         "laravel/framework": "^8.12",
-        "laravel/tinker": "^2.5"
+        "laravel/tinker": "^2.5",
+        "league/csv": "^9.6"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

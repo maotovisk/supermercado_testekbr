@@ -7,10 +7,8 @@ use App\Models\Subcategoria;
 use App\Models\Produto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
-use function PHPUnit\Framework\assertIsNumeric;
 
 class ProdutoController extends Controller
 {
@@ -19,11 +17,67 @@ class ProdutoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+
+
+        $selectedSubcategory = $request->input('subcategoria');
+        $selectedCategory = $request->input('categoria');
+
+        $produtos = Produto::paginate(15);
+
+        $categorias = Categoria::get();
+
+        $subcategorias = Subcategoria::get();
+
+        if ($selectedCategory !== null) {
+            $categoria = Categoria::find($selectedCategory);
+            if ($categoria != null) {
+                $produtos = $this->ordernar($request->input('orderBy'), $categoria); 
+                $subcategorias = $categoria->subcategorias;
+            }
+        }
+        /* só order by */
+        if ($request->input('orderBy') != null && $selectedSubcategory == null && $selectedCategory == null) {
+            switch ($request->input('orderBy')) {
+
+                    /* Ordenar por Menor Preço */
+                case '1':
+                    $produtos = Produto::orderBy('valor', 'asc')->paginate(15);
+                    break;
+
+                    /* Ordenar por Maior Preço */
+                case '2':
+                    $produtos = Produto::orderBy('valor', 'desc')->paginate(15);
+                    break;
+
+                    /* Ordenar por Ordem Alfabética */
+                case '3':
+                    $produtos = Produto::orderBy('titulo', 'asc')->paginate(15);
+                    break;
+
+                    /* Ordenar por Ordem Alfabética Inversa */
+                case '4':
+                    $produtos = Produto::orderBy('titulo', 'desc')->paginate(15);
+                    break;
+
+                default:
+                    # code...
+                    break;
+            }
+        }
+
+        if (is_numeric($selectedSubcategory)) {
+            $subcategoria = Subcategoria::find($selectedSubcategory);
+            if ($subcategoria != null)
+                /* order by com subcategoria */
+                $produtos = $this->ordernar($request->input('orderBy'), $subcategoria);
+                
+        }
+
         //
-        $produtos = Produto::paginate(15);        
-        return view('dashboard.produto.index', ['produtos' => $produtos]);
+        return view('dashboard.produto.index', ['produtos' => $produtos
+            ->appends(request()->query()), 'categorias' => $categorias, 'subcategorias' => $subcategorias,  'scategoria' => $selectedCategory, 'ssubcategoria' => $selectedSubcategory]);
     }
 
     /**
@@ -38,7 +92,6 @@ class ProdutoController extends Controller
         $subcategorias = Subcategoria::get();
 
         return view('dashboard.produto.criar', ['categorias' => $categorias, 'subcategorias' => $subcategorias]);
-
     }
 
     /**
@@ -100,7 +153,6 @@ class ProdutoController extends Controller
         ]);
 
         return redirect(route('produtos'))->with('status', 'Produto adicionado!');
-        
     }
 
     /**
@@ -146,5 +198,145 @@ class ProdutoController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function export(Request $request) {
+
+        $selectedSubcategory = $request->input('subcategoria');
+        $selectedCategory = $request->input('categoria');
+
+        $produtos = Produto::all();
+
+        $categorias = Categoria::get();
+
+        $subcategorias = Subcategoria::get();
+
+        if ($selectedCategory !== null) {
+            $categoria = Categoria::find($selectedCategory);
+            if ($categoria != null) {
+                $produtos = $this->ordernar($request->input('orderBy'), $categoria);
+            }
+        }
+
+        /* só order by */
+        if ($request->input('orderBy') != null && $selectedSubcategory == null && $selectedCategory == null) {
+            switch ($request->input('orderBy')) {
+
+                    /* Ordenar por Menor Preço */
+                case '1':
+                    $produtos = Produto::orderBy('valor', 'asc')->paginate(15);
+                    break;
+
+                    /* Ordenar por Maior Preço */
+                case '2':
+                    $produtos = Produto::orderBy('valor', 'desc')->paginate(15);
+                    break;
+
+                    /* Ordenar por Ordem Alfabética */
+                case '3':
+                    $produtos = Produto::orderBy('titulo', 'asc')->paginate(15);
+                    break;
+
+                    /* Ordenar por Ordem Alfabética Inversa */
+                case '4':
+                    $produtos = Produto::orderBy('titulo', 'desc')->paginate(15);
+                    break;
+
+                default:
+                    # code...
+                    break;
+            }
+        }
+
+        if (is_numeric($selectedSubcategory)) {
+            $subcategoria = Subcategoria::find($selectedSubcategory);
+            if ($subcategoria != null)
+                /* order by com subcategoria */
+                $produtos = $this->ordernar($request->input('orderBy'), $subcategoria);
+                
+        }
+
+        if($request->input('tipo') == 'csv') {
+            $csv = \League\Csv\Writer::createFromFileObject(new \SplTempFileObject);
+
+            $csv->insertOne(array_keys($produtos[0]->getAttributes()));
+            
+            
+
+            foreach ($produtos as $produto) {
+                $csv->insertOne($produto->toArray());
+            }
+            
+            $writer = $csv->output('people.csv');
+        
+            return response((string) $writer, 200, [
+                'Content-Type' => 'text/csv',
+                'Content-Transfer-Encoding' => 'binary',
+                'Content-Disposition' => 'attachment; filename="people.csv"',
+            ]);
+        } else {
+            return redirect(route('produtos'))->with('status', "PDF AINDA N IMPLEMENTADO");
+        }
+    
+    }
+
+    function ordernarSemPaginar($indice, $modelo) {
+        switch ($indice) {
+
+            /* Ordenar por Menor Preço */
+        case '1':
+            return $modelo->produtos()->orderBy('valor', 'asc');
+            break;
+
+            /* Ordenar por Maior Preço */
+        case '2':
+            return $modelo->produtos()->orderBy('valor', 'desc');
+            break;
+
+            /* Ordenar por Ordem Alfabética */
+        case '3':
+            return $modelo->produtos()->orderBy('valor', 'asc');
+            break;
+
+            /* Ordenar por Ordem Alfabética Inversa */
+        case '4':
+            return $modelo->produtos()->orderBy('titulo', 'desc');
+            break;
+
+        default:
+            # code...
+            return $modelo->produtos();
+            break;
+        }
+    }
+
+    function ordernar($indice, $modelo) {
+        switch ($indice) {
+
+            /* Ordenar por Menor Preço */
+        case '1':
+            return $modelo->produtos()->orderBy('valor', 'asc')->paginate(15);
+            break;
+
+            /* Ordenar por Maior Preço */
+        case '2':
+            return $modelo->produtos()->orderBy('valor', 'desc')->paginate(15);
+            break;
+
+            /* Ordenar por Ordem Alfabética */
+        case '3':
+            return $modelo->produtos()->orderBy('valor', 'asc')->paginate(15);
+            break;
+
+            /* Ordenar por Ordem Alfabética Inversa */
+        case '4':
+            return $modelo->produtos()->orderBy('titulo', 'desc')->paginate(15);
+            break;
+
+        default:
+            # code...
+            return $modelo->produtos()->paginate(15);
+            break;
+        }
     }
 }
