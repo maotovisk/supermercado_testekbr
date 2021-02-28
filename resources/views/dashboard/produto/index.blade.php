@@ -4,9 +4,14 @@
         <x-slot name="header">
             <div class="flex justify-between items-center">
                 <p class="text-xl text-gray-800 font-semibold">{{ __('Produtos') }}</p>
-                @if (Auth::user()->is_admin)
-                    <x-botao-link :href="route('produtos.novo')">Adicionar Novo</x-botao-link>
-                @endif
+                <div>
+                    <x-botao-link onclick="exportar('pdf')">Exportar como PDF</x-botao-link>
+                    <x-botao-link onclick="exportar('csv')">Exportar como CSV</x-botao-link>
+                    @if (Auth::user()->is_admin)
+
+                        <x-botao-link href="route('produtos.novo'),">Adicionar Novo</x-botao-link>
+                    @endif
+                </div>
             </div>
         </x-slot>
 
@@ -16,29 +21,43 @@
         <x-container-principal>
             @if (count($produtos) > 0)
                 <x-controle-tabelas>
-                    <div class="flex flex-wrap ">
-                    <div>
-                        <label for="select_categoria">Categoria: <label>
-                        <select name="select_categoria" onchange="sendRequest('categoria', this.value)">
-                            <option value="todas">Todas</option>
-                            @foreach ($categorias as $categoria)
-                                <option @if ($scategoria == $categoria->id) selected @endif value="{{$categoria->id}}">{{$categoria->titulo}}</option>
-                            @endforeach
-                        </select> 
-                    </div>
-                    @if (is_numeric($scategoria) || is_numeric($ssubcategoria))
-                    <div class="px-4">
-                    <label for="select_subcategoria">Subcategoria: <label>
-                        <select name="select_subcategoria" onchange="sendRequest('subcategoria', this.value)">
-                            <option value="todas">Todas</option>
-                            @foreach ($subcategorias as $subcategoria)
-                                <option @if ($ssubcategoria == $subcategoria->id) selected @endif value="{{$subcategoria->id}}">{{$subcategoria->titulo}}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    @endif 
+                    <div style="width:100%" class="flex flex-grow justify-between items-center">
+                        <div class="flex">
+                            <div>
+                                <label for="select_categoria">Categoria: </label>
+                                <select name="select_categoria" onchange="sendRequest('categoria', this.value)">
+                                    <option value="todas">Todas</option>
+                                    @foreach ($categorias as $categoria)
+                                        <option @if ($scategoria == $categoria->id) selected @endif value="{{ $categoria->id }}">
+                                            {{ $categoria->titulo }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            @if (is_numeric($scategoria) || is_numeric($ssubcategoria))
+                                <div class="px-4">
+                                    <label for="select_subcategoria">Subcategoria: </label>
+                                    <select name="select_subcategoria" onchange="sendRequest('subcategoria', this.value)">
+                                        <option value="todas">Todas</option>
+                                        @foreach ($subcategorias as $subcategoria)
+                                            <option @if ($ssubcategoria == $subcategoria->id) selected @endif value="{{ $subcategoria->id }}">
+                                                {{ $subcategoria->titulo }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            @endif
+                        </div>
+                        <div>
+                            <label for="select_order">Ordernar: <label>
+                                    <select name="select_order" onchange="sendRequest('ordernar', this.value)">
+                                        <option value="todas">Nenhuma</option>
+                                        <option value="1">Menor Preço</option>
+                                        <option value="2">Maior Preço</option>
+                                        <option value="3">Ordem Alfabética (A-Z)</option>
+                                        <option value="4">Ordem Alfabética (Z-A)</option>
+                                    </select>
+                        </div>
 
-                </div>
+                    </div>
                 </x-controle-tabelas>
                 <x-tabela>
                     <thead class="bg-gray-50 text-gray-500 text-sm">
@@ -70,11 +89,15 @@
                                 <td class="py-2 px-3">{{ $produto->valor }}</td>
                                 <td class="py-2 px-3">
                                     <span
-                                        class="bg-indigo-200 text-indigo-500 text-xs font-semibold rounded-md py-1 px-2">{{ $produto->is_active ? 'Sim' : 'Não' }}</span></td>
-                                <td class="py-2 px-3 text-center"><x-botao-link :href="route('produtos.ver', $produto->id)">Ver</x-botao-link></td>
+                                        class="bg-indigo-200 text-indigo-500 text-xs font-semibold rounded-md py-1 px-2">{{ $produto->is_active ? 'Sim' : 'Não' }}</span>
+                                </td>
+                                <td class="py-2 px-3 text-center">
+                                    <x-botao-link :href="route('produtos.ver', $produto->id)">Ver</x-botao-link>
+                                </td>
                                 @if (Auth::user()->is_admin)
                                     <td class="py-2">
-                                        <x-grupo-editar-deletar :deletar="route('produtos.excluir', $produto->id)" :editar="route('produtos.editar', $produto->id)" />
+                                        <x-grupo-editar-deletar :deletar="route('produtos.excluir', $produto->id)"
+                                            :editar="route('produtos.editar', $produto->id)" />
                                     </td>
                                 @endif
                             </tr>
@@ -97,9 +120,8 @@
 
                 var queryParams = new URLSearchParams(window.location.search);
 
-                if (id != "todas")
-                {
-                    if (tipo == "categoria"){
+                if (id != "todas") {
+                    if (tipo == "categoria") {
                         queryParams.set("categoria", id);
                         queryParams.set("page", 1);
                     }
@@ -107,20 +129,42 @@
                         queryParams.set("subcategoria", id);
                         queryParams.set("page", 1);
                     }
-                } else { 
+                    if (tipo == "ordernar") {
+                        queryParams.set("orderBy", id);
+                        queryParams.set("page", 1);
+                    }
+                } else {
                     if (tipo == "categoria")
                         queryParams.delete('categoria')
-                        queryParams.delete("subcategoria");
+                    queryParams.delete("subcategoria");
 
                     if (tipo == "subcategoria")
                         queryParams.delete("subcategoria");
+                    if (tipo == "ordernar")
+                        queryParams.delete("orderBy");
+                }
 
+
+                history.replaceState(null, null, "?" + queryParams.toString());
+                location.reload();
+            }
+
+            function exportar(tipo) {
+
+                var queryParams = new URLSearchParams(window.location.search);
+
+                if (tipo == 'pdf') {
+                    queryParams.set("tipo", 'pdf');
+
+                }
+                if (tipo == 'csv') {
+                    queryParams.set("tipo", 'csv');
 
                 }
 
-                
-                    history.replaceState(null, null, "?"+queryParams.toString());
-                location.reload();
+
+                window.location.replace('{{ route('produtos.exportar') }}?' + queryParams.toString());
             }
+
         </script>
     </x-app-layout>

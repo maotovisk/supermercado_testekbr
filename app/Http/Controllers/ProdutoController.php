@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Categoria;
 use App\Models\Subcategoria;
 use App\Models\Produto;
+use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\ValidationException;
@@ -202,6 +203,10 @@ class ProdutoController extends Controller
 
     public function export(Request $request) {
 
+
+        $subcategoria = null;
+        $subcategoria = null;
+        
         $selectedSubcategory = $request->input('subcategoria');
         $selectedCategory = $request->input('categoria');
 
@@ -212,6 +217,7 @@ class ProdutoController extends Controller
         $subcategorias = Subcategoria::get();
 
         if ($selectedCategory !== null) {
+
             $categoria = Categoria::find($selectedCategory);
             if ($categoria != null) {
                 $produtos = $this->ordernar($request->input('orderBy'), $categoria);
@@ -275,7 +281,12 @@ class ProdutoController extends Controller
                 'Content-Disposition' => 'attachment; filename="people.csv"',
             ]);
         } else {
-            return redirect(route('produtos'))->with('status', "PDF AINDA N IMPLEMENTADO");
+
+
+             $pdf = PDF::loadView('documents.produtos-pdf', ['produtos' => $produtos, 'categoria' => $categoria, 'subcategoria' => $subcategoria]);
+
+            return $pdf->download('produtos'.date(format:'d-M-Y-H:i').'pdf');
+            /*return redirect(route('produtos'))->with('status', "PDF AINDA N IMPLEMENTADO");*/
         }
     
     }
