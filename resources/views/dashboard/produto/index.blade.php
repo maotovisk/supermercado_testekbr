@@ -5,11 +5,11 @@
             <div class="flex justify-between items-center">
                 <p class="text-xl text-gray-800 font-semibold">{{ __('Produtos') }}</p>
                 <div>
-                    <x-botao-link onclick="exportar('pdf')">Exportar como PDF</x-botao-link>
-                    <x-botao-link onclick="exportar('csv')">Exportar como CSV</x-botao-link>
+                    <x-botao-download onclick="exportar('pdf')">Exportar como PDF</x-botao-download>
+                    <x-botao-download onclick="exportar('csv')">Exportar como CSV</x-botao-download>
                     @if (Auth::user()->is_admin)
 
-                        <x-botao-link href="route('produtos.novo'),">Adicionar Novo</x-botao-link>
+                        <x-botao-link :href="route('produtos.novo')" >Adicionar Novo</x-botao-link>
                     @endif
                 </div>
             </div>
@@ -70,7 +70,7 @@
                             </th>
                             <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Valor
                             </th>
-                            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Ativo
+                            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status
                             </th>
                             <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Detalhes
                             </th>
@@ -86,10 +86,10 @@
                                 <td class="py-2 px-3">{{ $produto->titulo }}</td>
                                 <td class="py-2 px-3">{{ $produto->categoria->titulo }}</td>
                                 <td class="py-2 px-3">{{ $produto->subcategoria->titulo }}</td>
-                                <td class="py-2 px-3">{{ $produto->valor }}</td>
+                                <td class="py-2 px-3">R$ {{ $produto->valor }}</td>
                                 <td class="py-2 px-3">
                                     <span
-                                        class="bg-indigo-200 text-indigo-500 text-xs font-semibold rounded-md py-1 px-2">{{ $produto->is_active ? 'Sim' : 'Não' }}</span>
+                                        class="bg-indigo-200 text-indigo-500 text-xs font-semibold rounded-md py-1 px-2">{{ $produto->is_active ? 'Ativo' : 'Inativo' }}</span>
                                 </td>
                                 <td class="py-2 px-3 text-center">
                                     <x-botao-link :href="route('produtos.ver', $produto->id)">Ver</x-botao-link>

@@ -28,7 +28,7 @@
                 <div>
                     <x-label for="valor" :value="__('Preço')" />
 
-                    <x-input id="valor" class="block mt-1 w-full" type="number" min="0"  step=".01" name="valor" :value="old('titulo')" required/>
+                    <x-input id="valor" class="block mt-1 w-full" type="number" min="0"  step=".01" name="valor" :value="old('valor')" required/>
                 </div>
                 <br>
 

@@ -36,7 +36,9 @@
                     <tr>
                             <td style="width:100%"> {{$produto->titulo}}</td>
                             <td> R$ {{$produto->valor}} </td>
-                            <td> {{$produto->is_active ? "Ativo" : "Inativo"}} </td>
+                            <td> 
+                                <span
+                                    class="bg-indigo-200 text-indigo-500 text-xs font-semibold rounded-md py-1 px-2">{{ $produto->is_active ? 'Ativo' : 'Inativo' }}</span> </td>
                     </tr>
                     @endforeach
                 </tbody>

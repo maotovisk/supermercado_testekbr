@@ -85,7 +85,7 @@ class CategoriaController extends Controller
     {
 
         $request->validate([
-            'titulo' => 'required|unique:categorias|string|max:255',
+            'titulo' => 'required|unique:categorias,titulo,'.$id.'|string|max:255',
         ]);
 
 
