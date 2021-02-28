@@ -17,7 +17,15 @@ class SubcategoriaController extends Controller
      */
     public function index($categoria_id)
     {
-        $subcategorias = Categoria::find($categoria_id)->subcategorias()->paginate(15);    
+        if(!is_numeric($categoria_id))
+            return abort("404", "Não foi possivel encontrar a categoria!");
+
+        $categoria = Categoria::find($categoria_id);
+        
+        if($categoria == null)
+            return abort("404", "Não foi possivel encontrar a categoria!");
+
+        $subcategorias = $categoria->subcategorias()->paginate(15);    
 
         return view('dashboard.categoria.subcategoria.index', ['subcategorias' => $subcategorias, 'categoria' => Categoria::find($categoria_id)]);
     }

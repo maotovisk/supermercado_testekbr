@@ -16,13 +16,11 @@ Route::group(['prefix' => 'produto', 'as' => 'produtos', 'middleware' => 'auth']
     */
     Route::get('/', [ProdutoController::class, 'index'])
         ->name('');
-    
-    
-    Route::get('/{id}', [ProdutoController::class, 'show'])
-        ->name('.ver');
 
+    
     Route::get('/exportar', [ProdutoController::class, 'export'])
-        ->name('.exportar');
+    ->name('.exportar');
+
 
     Route::middleware('admin')->group(function () {
 
@@ -31,12 +29,6 @@ Route::group(['prefix' => 'produto', 'as' => 'produtos', 'middleware' => 'auth']
         */
         Route::get('/novo', [ProdutoController::class, 'create'])
             ->name('.novo');
-
-        /*
-        GET: Ver Produto (view)
-        */
-        Route::get('/{id}', [ProdutoController::class, 'show'])
-        ->name('.ver');
 
         /*
         POST: Registrar Produto (api)
@@ -62,6 +54,10 @@ Route::group(['prefix' => 'produto', 'as' => 'produtos', 'middleware' => 'auth']
         Route::delete('/{id}/excluir', [ProdutoController::class, 'destroy'])
             ->name('.excluir');
     });
+
+
+    Route::get('/{id}', [ProdutoController::class, 'show'])
+        ->name('.ver');
 
 });
 

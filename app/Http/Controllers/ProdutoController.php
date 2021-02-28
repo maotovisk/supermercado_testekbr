@@ -167,12 +167,12 @@ class ProdutoController extends Controller
      */
     public function show($id)
     {
-        //
 
         $produto = Produto::find($id);
         $categorias = Categoria::get();
         $subcategorias = Subcategoria::get();
-
+        if ($produto == null)
+            return abort("404", "Não foi possivel encontrar o produto!");
         return view('dashboard.produto.ver', ['produto' => $produto, 'categorias' => $categorias, 'subcategorias' => $subcategorias, 'selectedCategory' => $produto->categoria, 'selectedSubcategory' => $produto->subcategoria]);
     }
 
@@ -278,7 +278,10 @@ class ProdutoController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Produto::destroy($id);
+
+        return redirect(route('produtos', $id))->with('status', 'Produto removido com sucesso!');
+    
     }
 
     public function export(Request $request)
@@ -382,7 +385,7 @@ class ProdutoController extends Controller
 
                 /* Ordenar por Ordem Alfabética */
             case '3':
-                return $modelo->produtos()->orderBy('valor', 'asc');
+                return $modelo->produtos()->orderBy('titulo', 'asc');
                 break;
 
                 /* Ordenar por Ordem Alfabética Inversa */
@@ -413,7 +416,7 @@ class ProdutoController extends Controller
 
                 /* Ordenar por Ordem Alfabética */
             case '3':
-                return $modelo->produtos()->orderBy('valor', 'asc')->paginate(15);
+                return $modelo->produtos()->orderBy('titulo', 'asc')->paginate(15);
                 break;
 
                 /* Ordenar por Ordem Alfabética Inversa */
