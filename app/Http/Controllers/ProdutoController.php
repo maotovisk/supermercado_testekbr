@@ -381,7 +381,7 @@ class ProdutoController extends Controller
 
             $pdf = PDF::loadView('documents.produtos-pdf', ['produtos' => $produtos, 'categoria' => $categoria, 'subcategoria' => $subcategoria]);
 
-            return $pdf->download('produtos' . date(format: 'd-M-Y-H_i') . 'pdf');
+            return $pdf->download('produtos' . date('d-M-Y-H_i') . 'pdf');
         }
     }
 
