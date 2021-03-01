@@ -368,20 +368,22 @@ class ProdutoController extends Controller
             foreach ($produtos as $produto) {
                 $csv->insertOne($produto->toArray());
             }
+	    
+	    $nome = 'produtos' . date('d-M-Y-H_i') . '.csv';
 
-            $writer = $csv->output('people.csv');
+            $writer = $csv->output($nome);
 
             return response((string) $writer, 200, [
                 'Content-Type' => 'text/csv',
                 'Content-Transfer-Encoding' => 'binary',
-                'Content-Disposition' => 'attachment; filename="people.csv"',
+                'Content-Disposition' => 'attachment; filename="'. $nome.'"',
             ]);
         } else {
 
 
             $pdf = PDF::loadView('documents.produtos-pdf', ['produtos' => $produtos, 'categoria' => $categoria, 'subcategoria' => $subcategoria]);
 
-            return $pdf->download('produtos' . date('d-M-Y-H_i') . 'pdf');
+            return $pdf->download('produtos' . date('d-M-Y-H_i') . '.pdf');
         }
     }
 
