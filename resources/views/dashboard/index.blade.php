@@ -16,9 +16,9 @@
                         {{ Auth::user()->id }}
                         <br>
                         @if (Auth::user()->is_admin)
-                            Bom dia caro administrador.
+                            Olá administrador, para começar a navegar, utilize das abas acima!
                         @else
-                            Bom dia caro usuário padrão que nao pode fazer nada além de ver os campos KKKKK.
+                            Olá usuário, para começar a navegar, utilize das abas acima!
                         @endif
                     </div>
                 </div>
