@@ -5,7 +5,7 @@
             <div class="flex justify-between items-center">
                 <p class="text-xl text-gray-800 font-semibold">{{ __('Produtos') }}</p>
                 <div>
-                    @if (count($produtos > 0))
+                    @if (count($produtos) > 0)
                         <x-botao-download onclick="exportar('pdf')">Exportar como PDF</x-botao-download>
                         <x-botao-download onclick="exportar('csv')">Exportar como CSV</x-botao-download>        
                     @endif
